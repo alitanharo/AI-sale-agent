@@ -31,20 +31,11 @@ Verona Voice is a premium fashion storefront demo with a **voice concierge** tha
    npm run dev
    ```
 
-## 🌍 Deploy to Vercel (step‑by‑step)
-1. Push your repo to GitHub.
-2. Go to https://vercel.com and import the repository.
-3. Set the environment variable:
-   - `API_KEY` = your language-model API key
-4. Build settings:
-   - Framework: **Vite**
-   - Build command: `npm run build`
-   - Output: `dist`
-5. Deploy.
+
 
 ## 🧩 Tech Stack
 - React + TypeScript + Vite
 - @google/genai (language model integration)
 
 ## 📌 Notes
-This project is a demo and does not process real payments.
+This project is just a demo.
