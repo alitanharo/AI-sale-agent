@@ -25,7 +25,7 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
-// Gemini Agent Response Types
+// Concierge Response Types
 export interface AddToCartIntent {
   intent: "ADD_TO_CART";
   productId?: string;
@@ -48,7 +48,7 @@ export interface GetProductRecommendationIntent {
 export interface AnswerFaqIntent {
   intent: "ANSWER_FAQ";
   questionKey?: string; // e.g., "return_policy"
-  answer?: string; // If Gemini generates it
+  answer?: string;
   message: string;
 }
 export interface NavigateToCheckoutIntent {
@@ -64,7 +64,7 @@ export interface ErrorIntent {
   message: string;
 }
 
-export type GeminiAgentResponse = 
+export type ConciergeResponse = 
   | AddToCartIntent 
   | NavigateToProductIntent 
   | GetProductRecommendationIntent 

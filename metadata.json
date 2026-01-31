@@ -1,6 +1,6 @@
 {
-  "name": "StyleSphere E-commerce AI Assistant",
-  "description": "An e-commerce web application featuring product listings, cart management, FAQs, and an AI-powered voice assistant built with Gemini API for enhanced user interaction.",
+  "name": "Verona Voice Commerce",
+  "description": "A premium commerce demo featuring product listings, cart management, FAQs, and a voice concierge for guided shopping.",
   "requestFramePermissions": [
     "microphone"
   ]

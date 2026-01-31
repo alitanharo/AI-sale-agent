@@ -1,8 +1,8 @@
 
 import { Product, FaqItem } from './types';
 
-export const APP_NAME = "StyleSphere";
-export const GEMINI_MODEL_NAME = 'gemini-2.5-flash';
+export const APP_NAME = "Verona Voice";
+export const MODEL_NAME = 'gemini-2.5-flash';
 
 export const SAMPLE_PRODUCTS: Product[] = [
   {
@@ -120,10 +120,12 @@ export const SAMPLE_PRODUCTS: Product[] = [
 ];
 
 export const SAMPLE_FAQS: FaqItem[] = [
-  { id: 'faq1', question: 'What is your return policy?', answer: 'We offer a 30-day free return policy on all eligible items. Items must be in new and unused condition with original packaging.' },
-  { id: 'faq2', question: 'How long does shipping take?', answer: 'Standard shipping typically takes 3-5 business days. Expedited options are available at checkout.' },
-  { id: 'faq3', question: 'Do you ship internationally?', answer: 'Currently, we only ship within the United States. We are working on expanding our shipping options in the future.' },
-  { id: 'faq4', question: 'How can I track my order?', answer: 'Once your order ships, you will receive an email with a tracking number and a link to track your package.' },
+  { id: 'faq1', question: 'How do I use Luca to shop hands-free?', answer: 'Open the concierge panel and tap “Speak to Luca.” Ask for recommendations, add items to cart, or navigate to a product page using natural phrases.' },
+  { id: 'faq2', question: 'What can I ask the concierge to do?', answer: 'Try: “Recommend a summer dress,” “Add the navy striped dress to cart,” or “Show me the beige dress.”' },
+  { id: 'faq3', question: 'What is your return policy?', answer: 'We offer a 30-day free return policy on all eligible items. Items must be in new and unused condition with original packaging.' },
+  { id: 'faq4', question: 'How long does shipping take?', answer: 'Standard shipping typically takes 3-5 business days. Expedited options are available at checkout.' },
+  { id: 'faq5', question: 'Do you ship internationally?', answer: 'Currently, we only ship within the United States. We are working on expanding our shipping options in the future.' },
+  { id: 'faq6', question: 'How can I track my order?', answer: 'Once your order ships, you will receive an email with a tracking number and a link to track your package.' },
 ];
 
-export const DEFAULT_GEMINI_ERROR_MESSAGE = "I'm sorry, I encountered an issue. Please try again or rephrase your request.";
+export const DEFAULT_CONCIERGE_ERROR_MESSAGE = "I'm sorry, I encountered an issue. Please try again or rephrase your request.";

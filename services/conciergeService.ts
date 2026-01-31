@@ -1,16 +1,16 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { Product, FaqItem, GeminiAgentResponse, ErrorIntent, GetProductRecommendationIntent } from '../types';
-import { GEMINI_MODEL_NAME, DEFAULT_GEMINI_ERROR_MESSAGE, APP_NAME } from '../constants';
+import { Product, FaqItem, ConciergeResponse, ErrorIntent, GetProductRecommendationIntent } from '../types';
+import { MODEL_NAME, DEFAULT_CONCIERGE_ERROR_MESSAGE, APP_NAME } from '../constants';
 
 // Ensure API_KEY is accessed from process.env
 const API_KEY = process.env.API_KEY;
 
 if (!API_KEY) {
-  console.error("API_KEY for Gemini is not set. Please set the API_KEY environment variable.");
+  console.error("API key is not set. Please set the API_KEY environment variable.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" }); 
+const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" });
 
 interface AgentContext {
   lastRecommendedProductIds?: string[];
@@ -38,7 +38,7 @@ If the user clarifies (e.g. "add the second one" or a specific name from context
   }
 
   return `
-You are "Nova", a friendly and helpful voice assistant for the e-commerce store "${APP_NAME}".
+You are "Luca", a refined voice concierge for the fashion store "${APP_NAME}".
 Your goal is to understand user requests related to shopping, product information, and FAQs, and then respond with a JSON object detailing the recognized intent and necessary information.
 ${contextInfo}
 User's voice input: "${query}"
@@ -87,34 +87,34 @@ export const getAgentResponse = async (
   products: Product[], 
   faqs: FaqItem[],
   context?: AgentContext
-): Promise<GeminiAgentResponse> => {
+): Promise<ConciergeResponse> => {
   if (!API_KEY) {
-    return { intent: "ERROR", message: "The AI assistant is currently unavailable. API key is missing." };
+    return { intent: "ERROR", message: "The concierge is currently unavailable. API key is missing." };
   }
   
   const prompt = constructPrompt(query, products, faqs, context);
 
   try {
     const response = await ai.models.generateContent({
-      model: GEMINI_MODEL_NAME,
+      model: MODEL_NAME,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
       }
     });
     
-    let jsonStr = response.text.trim();
+    let jsonStr = (response.text ?? "{}").trim();
     const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
     const match = jsonStr.match(fenceRegex);
     if (match && match[2]) {
       jsonStr = match[2].trim();
     }
 
-    const parsedResponse = JSON.parse(jsonStr) as GeminiAgentResponse; 
+    const parsedResponse = JSON.parse(jsonStr) as ConciergeResponse; 
     
     if (!parsedResponse.intent || !parsedResponse.message) {
-        console.error("Gemini response missing intent or message:", parsedResponse);
-        throw new Error("Invalid response structure from AI.");
+    console.error("Model response missing intent or message:", parsedResponse);
+        throw new Error("Invalid response structure from the concierge model.");
     }
      if (parsedResponse.intent === "GET_PRODUCT_RECOMMENDATION") {
         const GPRIntent = parsedResponse as GetProductRecommendationIntent;
@@ -125,10 +125,10 @@ export const getAgentResponse = async (
     return parsedResponse;
 
   } catch (error) {
-    console.error("Error calling Gemini API or parsing response:", error);
+    console.error("Error calling the language model or parsing response:", error);
     const errorIntent: ErrorIntent = {
       intent: 'ERROR',
-      message: DEFAULT_GEMINI_ERROR_MESSAGE,
+      message: DEFAULT_CONCIERGE_ERROR_MESSAGE,
     };
     return errorIntent;
   }

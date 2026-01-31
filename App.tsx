@@ -9,7 +9,7 @@ import CartPage from './components/CartPage';
 import FaqPage from './components/FaqPage';
 import ChatAgentIcon from './components/ChatAgentIcon';
 import ChatAgentUI from './components/ChatAgentUI';
-import { Product, CartItem, FaqItem, GeminiAgentResponse, AddToCartIntent, NavigateToProductIntent, GetProductRecommendationIntent } from './types';
+import { Product, CartItem, FaqItem, ConciergeResponse, AddToCartIntent, NavigateToProductIntent, GetProductRecommendationIntent } from './types';
 import { SAMPLE_PRODUCTS, SAMPLE_FAQS }
 from './constants';
 import { getProductById as fetchProductById, getProducts as fetchProducts } from './services/productService'; 
@@ -67,7 +67,7 @@ const AppContent: React.FC = () => {
     }
   }, [removeFromCart]);
 
-  const handleAgentResponse = useCallback((response: GeminiAgentResponse): string => {
+  const handleAgentResponse = useCallback((response: ConciergeResponse): string => {
     let userFeedbackMessage = response.message;
 
     switch (response.intent) {
@@ -112,30 +112,30 @@ const AppContent: React.FC = () => {
         break;
       case 'GET_PRODUCT_RECOMMENDATION':
         const recommendIntent = response as GetProductRecommendationIntent;
-        userFeedbackMessage = recommendIntent.message; // Start with Gemini's base message
+        userFeedbackMessage = recommendIntent.message; // Start with the concierge's base message
 
         if (recommendIntent.suggestedProductIds && recommendIntent.suggestedProductIds.length > 0) {
             const firstValidId = recommendIntent.suggestedProductIds.find(id => products.some(p => p.id === id));
             if (firstValidId) {
                 const product = products.find(p => p.id === firstValidId)!; // We know it exists from .find()
                 navigate(`/products/${firstValidId}`);
-                // Override or prepend to Gemini's message for a more direct action confirmation
+                // Override or prepend to the concierge's message for a more direct action confirmation
                 userFeedbackMessage = `Based on your request for "${recommendIntent.query}", I think you might like ${product.name}. I'm taking you to its page now!`;
             }
         } else if (recommendIntent.suggestedKeywords && recommendIntent.suggestedKeywords.length > 0) {
-            // The message from Gemini should ideally already incorporate these keywords.
+            // The message should ideally already incorporate these keywords.
             // We can add a suggestion to browse all products.
             if (location.pathname !== '/') {
               // userFeedbackMessage += " You can browse all our products to find something suitable.";
               // navigate('/'); // Optional: navigate to all products
             }
         }
-        // If neither specific IDs nor keywords lead to an action, Gemini's original message is spoken.
+        // If neither specific IDs nor keywords lead to an action, the concierge's original message is spoken.
         // No random navigation.
         break;
       case 'NAVIGATE_TO_CHECKOUT':
         navigate('/cart'); // Cart page has the "Proceed to Checkout" button
-        // userFeedbackMessage is already set by Gemini, e.g., "Okay, taking you to the checkout page."
+        // userFeedbackMessage is already set by the concierge.
         break;
       case 'GENERAL_QUERY':
       case 'ERROR':

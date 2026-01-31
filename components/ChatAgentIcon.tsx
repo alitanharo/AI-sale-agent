@@ -10,8 +10,8 @@ const ChatAgentIcon: React.FC<ChatAgentIconProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 right-6 bg-sky-500 hover:bg-sky-600 text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-sky-300 z-50"
-      aria-label="Open Voice Assistant"
+      className="fixed bottom-6 right-6 bg-[#bda77f] hover:bg-[#d6c19a] text-[#1a1a1a] p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#e3d3b3] z-50"
+      aria-label="Open Voice Concierge"
     >
       <MicrophoneIcon className="h-8 w-8" />
     </button>

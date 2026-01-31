@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Product, FaqItem, ChatMessage, GeminiAgentResponse, GetProductRecommendationIntent } from '../types';
-import { getAgentResponse } from '../services/geminiService';
+import { Product, FaqItem, ChatMessage, ConciergeResponse, GetProductRecommendationIntent } from '../types';
+import { getAgentResponse } from '../services/conciergeService';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
@@ -10,7 +10,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { UserIcon } from './icons/UserIcon';
 import { BotIcon } from './icons/BotIcon';
 import { VolumeUpIcon } from './icons/VolumeUpIcon';
-import { DEFAULT_GEMINI_ERROR_MESSAGE } from '../constants';
+import { DEFAULT_CONCIERGE_ERROR_MESSAGE } from '../constants';
 
 
 interface ChatAgentUIProps {
@@ -18,7 +18,7 @@ interface ChatAgentUIProps {
   onClose: () => void;
   products: Product[];
   faqs: FaqItem[];
-  onAgentAction: (response: GeminiAgentResponse) => string; 
+  onAgentAction: (response: ConciergeResponse) => string; 
 }
 
 interface AgentContext {
@@ -49,11 +49,11 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
   useEffect(() => {
     if (isOpen) {
       if (!initialInteractionDone && speechSynthSupported && speechRecSupported && !isAgentThinking && !isListeningRef.current) {
-        const welcomeMsgText = "Hi! I'm Nova, your shopping assistant. How can I help you today?";
+        const welcomeMsgText = "Welcome to Verona Voice. I'm Luca, your concierge for effortless shopping. How may I assist you?";
         
-        const welcomeMessageExists = chatHistory.some(msg => msg.id === 'nova-initial-welcome');
+        const welcomeMessageExists = chatHistory.some(msg => msg.id === 'nina-initial-welcome');
         if (!welcomeMessageExists) {
-             setChatHistory(prev => [{ id: 'nova-initial-welcome', sender: 'agent', text: welcomeMsgText, timestamp: new Date() }, ...prev.filter(m => m.id !== 'nova-initial-welcome')]);
+             setChatHistory(prev => [{ id: 'nina-initial-welcome', sender: 'agent', text: welcomeMsgText, timestamp: new Date() }, ...prev.filter(m => m.id !== 'nina-initial-welcome')]);
         }
 
         speak(welcomeMsgText, () => {
@@ -108,7 +108,7 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
 
     try {
       const agentResponsePayload = await getAgentResponse(finalTranscript, products, faqs, agentContext);
-      const messageToSpeak = onAgentAction(agentResponsePayload) || DEFAULT_GEMINI_ERROR_MESSAGE; 
+      const messageToSpeak = onAgentAction(agentResponsePayload) || DEFAULT_CONCIERGE_ERROR_MESSAGE; 
 
       const agentMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -136,7 +136,7 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
       });
     } catch (error) {
       console.error("Error processing agent response:", error);
-      const errorMessageText = error instanceof Error ? error.message : DEFAULT_GEMINI_ERROR_MESSAGE;
+      const errorMessageText = error instanceof Error ? error.message : DEFAULT_CONCIERGE_ERROR_MESSAGE;
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString() + '_err_api',
         sender: 'agent',
@@ -200,43 +200,54 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
 
   if (!isOpen) return null;
 
-  let micButtonText = speechRecSupported ? "Speak" : "Voice N/A";
+  let micButtonText = speechRecSupported ? "Speak to Luca" : "Voice N/A";
   let MicButtonIcon = MicrophoneIcon;
   if (isListening) {
     micButtonText = "Stop";
     MicButtonIcon = StopIcon;
   } else if (isAgentThinking) {
-    micButtonText = "Nova is thinking...";
+    micButtonText = "Luca is thinking...";
   }
 
 
   return (
     <div 
-      className="fixed bottom-24 right-6 w-full max-w-md h-[60vh] max-h-[480px] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden z-40 border border-slate-300" 
+      className="fixed bottom-24 right-6 w-full max-w-md h-[60vh] max-h-[520px] bg-[#f9f5ef] rounded-2xl shadow-2xl flex flex-col overflow-hidden z-40 border border-[#eadfca]" 
       role="dialog" 
       aria-modal="false" 
-      aria-labelledby="voice-assistant-heading"
+      aria-labelledby="voice-concierge-heading"
     >
         {/* Header */}
-        <div className="flex items-center justify-between p-3 border-b border-gray-200 bg-slate-700 text-white">
-          <h3 id="voice-assistant-heading" className="text-lg font-semibold">Nova Assistant</h3>
-          {isSpeaking && <VolumeUpIcon className="h-5 w-5 text-sky-300 animate-pulse" aria-label="Agent speaking" />}
-          <button onClick={handleClose} className="text-gray-300 hover:text-white transition-colors" aria-label="Close voice assistant">
+        <div className="flex items-center justify-between p-4 border-b border-[#eadfca] bg-[#141414] text-[#f2e6d0]">
+          <div>
+            <h3 id="voice-concierge-heading" className="text-lg font-semibold tracking-wide">Luca Concierge</h3>
+            <p className="text-xs text-[#c9b58f] mt-1">Your private shopping guide</p>
+          </div>
+          {isSpeaking && <VolumeUpIcon className="h-5 w-5 text-[#d6c19a] animate-pulse" aria-label="Concierge speaking" />}
+          <button onClick={handleClose} className="text-[#d6c19a] hover:text-white transition-colors" aria-label="Close concierge window">
             <CloseIcon className="h-6 w-6" />
           </button>
         </div>
 
         {/* Chat Body */}
-        <div ref={chatBodyRef} className="flex-grow p-4 space-y-3 overflow-y-auto bg-slate-50 custom-scrollbar" aria-live="polite" aria-atomic="false">
+        <div ref={chatBodyRef} className="flex-grow p-4 space-y-3 overflow-y-auto bg-[#f9f5ef] custom-scrollbar" aria-live="polite" aria-atomic="false">
+          <div className="bg-white border border-[#eadfca] rounded-xl p-3 text-xs text-[#6c5f47] leading-relaxed">
+            <p className="font-semibold text-[#4a3f2f]">How to use Luca</p>
+            <ul className="mt-2 space-y-1">
+              <li>• Tap <span className="font-semibold">Speak to Luca</span> and say what you want.</li>
+              <li>• Try: “Recommend a summer dress” or “Add the black dress to cart.”</li>
+              <li>• Ask: “Where is my order?” or “What is your return policy?”</li>
+            </ul>
+          </div>
           {chatHistory.map(msg => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start gap-2 max-w-[85%]`}>
-                {msg.sender === 'agent' && <BotIcon className="h-7 w-7 text-sky-500 bg-sky-100 rounded-full p-1 shrink-0" />}
+                {msg.sender === 'agent' && <BotIcon className="h-7 w-7 text-[#bda77f] bg-[#f5efe4] rounded-full p-1 shrink-0" />}
                  <div
                   className={`p-2.5 rounded-lg shadow-sm ${
                     msg.sender === 'user' 
-                      ? 'bg-sky-500 text-white rounded-br-none' 
-                      : 'bg-gray-200 text-slate-800 rounded-bl-none'
+                      ? 'bg-[#1a1a1a] text-[#f2e6d0] rounded-br-none' 
+                      : 'bg-white text-[#3b3327] rounded-bl-none border border-[#eadfca]'
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>
@@ -244,26 +255,26 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                 {msg.sender === 'user' && <UserIcon className="h-7 w-7 text-slate-500 bg-slate-100 rounded-full p-1 shrink-0" />}
+                 {msg.sender === 'user' && <UserIcon className="h-7 w-7 text-[#6c5f47] bg-[#f5efe4] rounded-full p-1 shrink-0" />}
               </div>
             </div>
           ))}
           {isListening && interimTranscript && (
              <div className="flex justify-end">
                 <div className="flex items-start gap-2 max-w-[85%]">
-                    <div className="p-2.5 rounded-lg bg-sky-100 text-sky-700 border border-sky-200 rounded-br-none italic shadow-sm">
+                    <div className="p-2.5 rounded-lg bg-[#f5efe4] text-[#6c5f47] border border-[#eadfca] rounded-br-none italic shadow-sm">
                         <p className="text-sm">{interimTranscript}...</p>
                     </div>
-                    <UserIcon className="h-7 w-7 text-slate-500 bg-slate-100 rounded-full p-1 shrink-0" />
+                    <UserIcon className="h-7 w-7 text-[#6c5f47] bg-[#f5efe4] rounded-full p-1 shrink-0" />
                 </div>
             </div>
           )}
           {isAgentThinking && (
             <div className="flex justify-start">
                <div className="flex items-start gap-2">
-                <BotIcon className="h-7 w-7 text-sky-500 bg-sky-100 rounded-full p-1 shrink-0" />
-                <div className="p-2.5 rounded-lg bg-gray-200 text-slate-800 rounded-bl-none shadow-sm">
-                  <p className="text-sm italic">Nova is thinking...</p>
+                <BotIcon className="h-7 w-7 text-[#bda77f] bg-[#f5efe4] rounded-full p-1 shrink-0" />
+                <div className="p-2.5 rounded-lg bg-white text-[#3b3327] rounded-bl-none shadow-sm border border-[#eadfca]">
+                  <p className="text-sm italic">Luca is preparing your response...</p>
                 </div>
               </div>
             </div>
@@ -271,7 +282,7 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
         </div>
 
         {/* Input Area */}
-        <div className="p-3 border-t border-gray-200 bg-slate-100">
+        <div className="p-3 border-t border-[#eadfca] bg-[#f5efe4]">
           {speechRecognitionError && !speechRecognitionError.includes("No speech") && !speechRecognitionError.includes("audio-capture") && ( 
             <p className="text-red-500 text-xs mb-1 text-center" role="alert">{speechRecognitionError}</p>
           )}
@@ -286,8 +297,8 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
           <button
             onClick={toggleMicButtonAction}
             disabled={isAgentThinking || !speechRecSupported} 
-            className={`w-full flex items-center justify-center py-2.5 px-4 rounded-md font-semibold text-white transition-all duration-200
-              ${isListening ? 'bg-red-500 hover:bg-red-600' : 'bg-sky-500 hover:bg-sky-600'}
+            className={`w-full flex items-center justify-center py-2.5 px-4 rounded-md font-semibold transition-all duration-200
+              ${isListening ? 'bg-[#8b2c2c] hover:bg-[#7a2323] text-white' : 'bg-[#1a1a1a] hover:bg-[#2a2a2a] text-[#f2e6d0]'}
               ${isAgentThinking || !speechRecSupported ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}`}
             aria-label={isListening ? "Stop listening" : (speechRecSupported ? "Start listening" : "Voice input not available")}
           >
@@ -300,15 +311,15 @@ const ChatAgentUI: React.FC<ChatAgentUIProps> = ({ isOpen, onClose, products, fa
           width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f5f9; /* bg-slate-100 */
+          background: #f5efe4;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #94a3b8; /* bg-slate-400 */
+          background: #d6c19a;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #64748b; /* bg-slate-500 */
+          background: #bda77f;
         }
       `}</style>
     </div>
