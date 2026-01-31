@@ -10,8 +10,8 @@ export default defineConfig(({ mode }) => {
         allowedHosts: true,
       },
       define: {
-        'process.env.API_KEY': JSON.stringify('AIzaSyCRpTSz4nFY-XWZtjGOKustJ3vN4OfZ0eg'),
-        'process.env.GEMINI_API_KEY': JSON.stringify('AIzaSyCRpTSz4nFY-XWZtjGOKustJ3vN4OfZ0eg')
+        'process.env.API_KEY': JSON.stringify(env.API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
       },
       resolve: {
         alias: {

@@ -2,7 +2,7 @@
 import { Product, FaqItem } from './types';
 
 export const APP_NAME = "StyleSphere";
-export const GEMINI_MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
+export const GEMINI_MODEL_NAME = 'gemini-2.5-flash';
 
 export const SAMPLE_PRODUCTS: Product[] = [
   {
